@@ -7,17 +7,17 @@
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:698894677458:android:a9ae102ffcd139d4edc40b",
+        "mobilesdk_app_id": "1:698894677458:android:c7faab1ccc3a4554edc40b",
         "android_client_info": {
-          "package_name": "endless.app.android"
+          "package_name": "com.nhiemlt.endlessapp"
         }
       },
       "oauth_client": [
         {
-          "client_id": "698894677458-ok5lokeq94tlsi24qimuf0q7itj8a9f9.apps.googleusercontent.com",
+          "client_id": "698894677458-hrpefe6akntava0989g3anq1uqbm56oc.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "endless.app.android",
+            "package_name": "com.nhiemlt.endlessapp",
             "certificate_hash": "d9ffe779720a7fbadba51dbcaf82741e92787287"
           }
         },
