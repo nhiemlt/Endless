@@ -1,0 +1,47 @@
+{
+  "project_info": {
+    "project_number": "698894677458",
+    "project_id": "endlesstechstoreecommerce",
+    "storage_bucket": "endlesstechstoreecommerce.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:698894677458:android:a9ae102ffcd139d4edc40b",
+        "android_client_info": {
+          "package_name": "endless.app.android"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "698894677458-ok5lokeq94tlsi24qimuf0q7itj8a9f9.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "endless.app.android",
+            "certificate_hash": "d9ffe779720a7fbadba51dbcaf82741e92787287"
+          }
+        },
+        {
+          "client_id": "698894677458-eo0g2atciq4fl7601ca3c70pu1dc6a24.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD5fK2zsIhcUmTVZqS1waGN84LqUGvcoHE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "698894677458-eo0g2atciq4fl7601ca3c70pu1dc6a24.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
