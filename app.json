@@ -24,9 +24,7 @@
       [
         "@react-native-google-signin/google-signin",
         {
-          "android": {
-            "googleServicesFile": "./google-services.json"
-          }
+          "iosUrlScheme": "com.googleusercontent.apps.placeholder"
         }
       ]
     ]
