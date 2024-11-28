@@ -1,11 +1,11 @@
 {
   "expo": {
-    "name": "endlessapp",
+    "name": "Endless",
     "slug": "endlessapp",
     "version": "1.0.0",
     "orientation": "portrait",
     "scheme": "endlessapp",
-    "icon": "./assets/icon.png",
+    "icon": "./assets/images/logo.png",
     "userInterfaceStyle": "light",
     "splash": {
       "image": "./assets/splash.png",
@@ -14,10 +14,11 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/adaptive-icon.png",
+        "foregroundImage": "./assets/images/logo.png",
         "backgroundColor": "#ffffff"
       },
-      "googleServicesFile": "./google-services.json"
+      "googleServicesFile": "./google-services.json",
+      "package": "com.nhiemlt.endlessapp"
     },
     "plugins": [
       "expo-router",

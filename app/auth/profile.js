@@ -9,7 +9,6 @@ import ProtectedRoute from "../../components/ProtectedRoute";
 export default function Profile() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
 
   const handleLogout = () => {
     dispatch(logoutAction());
@@ -20,16 +19,7 @@ export default function Profile() {
     <ProtectedRoute>
       <View style={styles.container}>
         <Text style={styles.title}>User Profile</Text>
-        {user ? (
-          <>
-            <Text style={styles.text}>Email: {user.email}</Text>
-            <TouchableOpacity style={styles.button} onPress={handleLogout}>
-              <Text style={styles.buttonText}>Logout</Text>
-            </TouchableOpacity>
-          </>
-        ) : (
-          <Text style={styles.text}>No user logged in</Text>
-        )}
+        <Text style={styles.text}>No user logged in</Text>
       </View>
     </ProtectedRoute>
   );

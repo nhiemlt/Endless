@@ -22,7 +22,7 @@ const ProtectedRoute = ({ children }) => {
   }
 
   if (!user) {
-    return null; // Render nothing while redirecting
+    return null;
   }
 
   return children;

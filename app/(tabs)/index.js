@@ -7,30 +7,8 @@ import Fontisto from "@expo/vector-icons/Fontisto";
 const TabHome = () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Welcome to Authentication</Text>
-      <Text style={styles.subtitle}>Technologies used:</Text>
-      <View style={styles.techList}>
-        <LinearGradient colors={["#61DBFB", "#35AFC2"]} style={styles.techItem}>
-          <Icon name="code" size={30} color="#fff" />
-          <Text style={styles.techText}>React Native</Text>
-        </LinearGradient>
-        <LinearGradient colors={["#764ABC", "#543B9A"]} style={styles.techItem}>
-          <Fontisto name="redux" size={30} color="#fff" />
-          <Text style={styles.techText}>Redux</Text>
-        </LinearGradient>
-        <LinearGradient colors={["#FF4154", "#D12B3A"]} style={styles.techItem}>
-          <Icon name="database" size={30} color="#fff" />
-          <Text style={styles.techText}>Tanstack Query</Text>
-        </LinearGradient>
-        <LinearGradient colors={["#0FAAFF", "#0B79C1"]} style={styles.techItem}>
-          <Icon name="wpforms" size={30} color="#fff" />
-          <Text style={styles.techText}>Formik</Text>
-        </LinearGradient>
-        <LinearGradient colors={["#000000", "#434343"]} style={styles.techItem}>
-          <Icon name="server" size={30} color="#fff" />
-          <Text style={styles.techText}>NodeJS API</Text>
-        </LinearGradient>
-      </View>
+      <Text style={styles.title}>Welcome to Endless Tech store</Text>
+      <Text style={styles.subtitle}>Product list:</Text>
     </View>
   );
 };

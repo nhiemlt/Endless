@@ -1,6 +1,6 @@
 import React from "react";
 import { StyleSheet, Text, View, TouchableOpacity } from "react-native";
-import Icon from "react-native-vector-icons/FontAwesome";
+import { FontAwesome } from "@expo/vector-icons"; 
 
 const Settings = () => {
   return (
@@ -8,9 +8,9 @@ const Settings = () => {
       <Text style={styles.header}>Settings</Text>
       <View style={styles.section}>
         <TouchableOpacity style={styles.option}>
-          <Icon name="user" size={24} color="#4caf50" />
+          <FontAwesome name="user" size={24} color="#4caf50" />
           <Text style={styles.optionText}>Account</Text>
-          <Icon
+          <FontAwesome
             name="angle-right"
             size={24}
             color="#999"
@@ -18,9 +18,9 @@ const Settings = () => {
           />
         </TouchableOpacity>
         <TouchableOpacity style={styles.option}>
-          <Icon name="bell" size={24} color="#ff9800" />
+          <FontAwesome name="bell" size={24} color="#ff9800" />
           <Text style={styles.optionText}>Notifications</Text>
-          <Icon
+          <FontAwesome
             name="angle-right"
             size={24}
             color="#999"
@@ -28,9 +28,9 @@ const Settings = () => {
           />
         </TouchableOpacity>
         <TouchableOpacity style={styles.option}>
-          <Icon name="lock" size={24} color="#f44336" />
+          <FontAwesome name="lock" size={24} color="#f44336" />
           <Text style={styles.optionText}>Privacy</Text>
-          <Icon
+          <FontAwesome
             name="angle-right"
             size={24}
             color="#999"
@@ -38,9 +38,9 @@ const Settings = () => {
           />
         </TouchableOpacity>
         <TouchableOpacity style={styles.option}>
-          <Icon name="info-circle" size={24} color="#3f51b5" />
+          <FontAwesome name="info-circle" size={24} color="#3f51b5" />
           <Text style={styles.optionText}>About</Text>
-          <Icon
+          <FontAwesome
             name="angle-right"
             size={24}
             color="#999"
@@ -48,9 +48,9 @@ const Settings = () => {
           />
         </TouchableOpacity>
         <TouchableOpacity style={styles.option}>
-          <Icon name="sign-out" size={24} color="#e91e63" />
+          <FontAwesome name="sign-out" size={24} color="#e91e63" />
           <Text style={styles.optionText}>Logout</Text>
-          <Icon
+          <FontAwesome
             name="angle-right"
             size={24}
             color="#999"

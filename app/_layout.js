@@ -1,16 +1,20 @@
-import { Stack } from "expo-router";
-import queryClient from "./(services)/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
-import store from "./(redux)/store";
-import { Provider } from "react-redux";
-import AppWrapper from "./(redux)/AppWrapper";
+import { Tabs } from "expo-router";
+import { Provider } from "react-redux"; // Import Provider từ react-redux
+import { FontAwesome } from "@expo/vector-icons";
+import store from "../app/(redux)/store"; // Đảm bảo đường dẫn đúng đến store
 
 export default function RootLayout() {
   return (
     <Provider store={store}>
-      <QueryClientProvider client={queryClient}>
-        <AppWrapper />
-      </QueryClientProvider>
+      <Tabs
+        screenOptions={{
+          headerShown: false,
+          tabBarStyle: { display: "none" },
+        }}
+      >
+        
+        
+      </Tabs>
     </Provider>
   );
 }

@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "698894677458-hrpefe6akntava0989g3anq1uqbm56oc.apps.googleusercontent.com",
+          "client_id": "698894677458-5o17rb7uedfsjkrl1cccp2psqdr1l3ku.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.nhiemlt.endlessapp",
-            "certificate_hash": "d9ffe779720a7fbadba51dbcaf82741e92787287"
+            "certificate_hash": "5e8f16062ea3cd2c4a0d547876baa6f38cabf625"
           }
         },
         {
