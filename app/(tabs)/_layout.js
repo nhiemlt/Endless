@@ -1,13 +1,21 @@
 import React, { useState } from "react";
 import { Provider as PaperProvider } from "react-native-paper";
-import { Tabs } from "expo-router";
+import { Tabs, useRouter } from "expo-router";
 import { Avatar, Menu, Divider } from "react-native-paper";
 import { View, Image, TouchableOpacity, StyleSheet } from "react-native";
 import Ionicons from '@expo/vector-icons/Ionicons';
+import { FontAwesome } from "@expo/vector-icons";
+
 export default function RootLayout() {
   const [menuVisible, setMenuVisible] = useState(false);
 
-  const openMenu = () => setMenuVisible(true);
+  const router = useRouter(); // Khởi tạo router
+
+  const openMenu = () => {
+    setMenuVisible(false); // Đóng menu nếu đang mở
+    router.push("pages/accountSettings"); // Điều hướng tới trang accountSetting
+  };
+  
   const closeMenu = () => setMenuVisible(false);
 
   return (
@@ -28,12 +36,8 @@ export default function RootLayout() {
                 onDismiss={closeMenu}
                 anchor={
                   <TouchableOpacity onPress={openMenu}>
-                    <Avatar.Image
-                      size={40}
-                      source={{
-                        uri: "https://th.bing.com/th?id=OIP.xnZUcOP3x2o9ywsJPgYODQHaHg",
-                      }}
-                    />
+                    <FontAwesome name="bell" size={24} color="#2089dc" />
+                    
                   </TouchableOpacity>
                 }
                 style={{ marginTop: 50 }}
@@ -47,7 +51,7 @@ export default function RootLayout() {
         <Tabs.Screen
           name="index"
           options={{
-            title: "Home",
+            title: "Trang chủ",
             tabBarIcon: ({ color }) => (
               <Ionicons name="home" size={24} color={color} />
             ),
@@ -56,7 +60,7 @@ export default function RootLayout() {
         <Tabs.Screen
           name="cart"
           options={{
-            title: "Cart",
+            title: "Giỏ hàng",
             tabBarIcon: ({ color }) => (
               <Ionicons name="cart" size={24} color={color}/>
             ),
@@ -65,7 +69,7 @@ export default function RootLayout() {
         <Tabs.Screen
           name="settings"
           options={{
-            title: "Settings",
+            title: "Cài đặt",
             tabBarIcon: ({ color }) => (
               <Ionicons name="settings" size={24} color={color}/>
             ),

@@ -11,9 +11,7 @@ export default function RootLayout() {
           headerShown: false,
           tabBarStyle: { display: "none" },
         }}
-      >
-        
-        
+      > 
       </Tabs>
     </Provider>
   );

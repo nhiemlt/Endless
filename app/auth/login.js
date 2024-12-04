@@ -1,34 +1,42 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, TextInput, TouchableOpacity, SafeAreaView, StyleSheet, Image } from 'react-native'; // Thêm CheckBox
+import { View, Text, TextInput, TouchableOpacity, SafeAreaView, StyleSheet, Image } from 'react-native';
 import CheckBox from 'expo-checkbox';
-
-import { Formik } from 'formik';
-import * as Yup from 'yup';
 import { useRouter } from 'expo-router';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { loginAction } from '../(redux)/authSlice';
 import { GoogleSignin, statusCodes, isErrorWithCode, isSuccessResponse } from '@react-native-google-signin/google-signin';
+import axios from 'axios'; // Import axios
 import { domain } from '../../constants/Domain'; // Import domain
-
-// Validation schema for the login form (accepting both email and username)
-const LoginSchema = Yup.object().shape({
-  emailOrUsername: Yup.string()
-    .required('Email hoặc Tên đăng nhập là bắt buộc')
-    .test('is-email', 'Email không hợp lệ', (value) => {
-      if (value && value.includes('@')) {
-        return Yup.string().email().isValidSync(value); // Check if email is valid
-      }
-      return true; // Consider username valid if it doesn't have '@'
-    }),
-  password: Yup.string().min(6, 'Mật khẩu quá ngắn').required('Mật khẩu là bắt buộc'),
-});
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function Login() {
   const router = useRouter();
   const dispatch = useDispatch();
-  const user = useSelector((state) => state.auth.user);
   const [alert, setAlert] = useState({ type: '', message: '' });
   const [rememberMe, setRememberMe] = useState(false); // Quản lý trạng thái remember me
+  const [emailOrUsername, setEmailOrUsername] = useState(''); // Tên tài khoản hoặc email
+  const [password, setPassword] = useState(''); // Mật khẩu
+  const [errors, setErrors] = useState({ emailOrUsername: '', password: '' });
+
+  useEffect(() => {
+    const clearAuthData = async () => {
+      // Xóa authToken và thông tin người dùng trong AsyncStorage
+      await AsyncStorage.removeItem('authToken');
+      await AsyncStorage.removeItem('userInfo');
+
+      // Reset Redux state (token và userInfo)
+      dispatch(loginAction({ token: '', user: null }));
+
+      // Reset trạng thái các form và rememberMe
+      setEmailOrUsername('');
+      setPassword('');
+      setRememberMe(false);
+      setAlert({ type: '', message: '' });
+      setErrors({ emailOrUsername: '', password: '' });
+    };
+
+    clearAuthData();
+  }, []);
 
   // Cấu hình Google Sign-In
   useEffect(() => {
@@ -50,24 +58,22 @@ export default function Login() {
         const { idToken, email, fullName, avatar } = response.data;
         console.log('Gửi idToken:', idToken);
   
-        const googleResponse = await fetch(`${domain}login/google`, {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            googleId: idToken,
-            email,
-            fullName,
-            avatar,
-          }),
+        const googleResponse = await axios.post(`${domain}login/google`, {
+          googleId: idToken,
+          email,
+          fullName,
+          avatar,
         });
   
-        const data = await googleResponse.json();
+        const data = googleResponse.data;
         console.log('Phản hồi từ backend sau khi đăng nhập Google:', data);
   
-        if (!googleResponse.ok) {
+        if (googleResponse.status !== 200) {
           setAlert({ type: 'error', message: data.error || 'Đăng nhập Google thất bại' });
         } else {
-          dispatch(loginAction(data));
+          // Lưu token và thông tin người dùng vào AsyncStorage và Redux
+          await AsyncStorage.setItem('authToken', data.token); // Lưu token vào AsyncStorage
+          dispatch(loginAction({ token: data.token, userInfo: data.role })); // Lưu thông tin người dùng vào Redux
           router.push('/(tabs)');
         }
       }
@@ -75,7 +81,7 @@ export default function Login() {
       handleError(error);
     }
   };
-  
+
   // Xử lý lỗi khi đăng nhập với Google
   const handleError = (error) => {
     console.log("Lỗi Google login:", error);
@@ -97,40 +103,59 @@ export default function Login() {
       setAlert({ type: 'error', message: `Lỗi kết nối: ${error.message}` });
     }
   };
-  
+
   // Xử lý đăng nhập với tài khoản thường
-  const submitForm = async (values) => {
+  const submitForm = async () => {
     setAlert({ type: '', message: '' });
-  
-    if (!values.emailOrUsername.trim()) {
-      console.log("Lỗi: Email hoặc Tên đăng nhập bị trống.");
-      return setAlert({ type: 'error', message: 'Email hoặc Tên đăng nhập là bắt buộc' });
+    let formValid = true;
+    let newErrors = { emailOrUsername: '', password: '' };
+
+    // Validation for email/username
+    if (!emailOrUsername.trim()) {
+      newErrors.emailOrUsername = 'Email hoặc Tên đăng nhập là bắt buộc';
+      formValid = false;
+    } else if (emailOrUsername.includes('@') && !/\S+@\S+\.\S+/.test(emailOrUsername)) {
+      newErrors.emailOrUsername = 'Email không hợp lệ';
+      formValid = false;
     }
-    if (!values.password.trim()) {
-      console.log("Lỗi: Mật khẩu bị trống.");
-      return setAlert({ type: 'error', message: 'Mật khẩu là bắt buộc' });
+
+    // Validation for password
+    if (!password.trim()) {
+      newErrors.password = 'Mật khẩu là bắt buộc';
+      formValid = false;
+    } else if (password.length < 6) {
+      newErrors.password = 'Mật khẩu quá ngắn';
+      formValid = false;
     }
-  
+
+    setErrors(newErrors);
+
+    if (!formValid) {
+      return; // Nếu có lỗi, không tiếp tục gửi yêu cầu
+    }
+
     try {
-      console.log('Đang gửi yêu cầu đăng nhập với username/email:', values.emailOrUsername);
-      const response = await fetch(`${domain}login`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          username: values.emailOrUsername,
-          password: values.password,
-          remember: rememberMe, // Gửi giá trị remember me
-        }),
+      console.log('Đang gửi yêu cầu đăng nhập với username/email:', emailOrUsername);
+      const response = await axios.post(`${domain}/login`, {
+        username: emailOrUsername,
+        password: password,
+        remember: rememberMe, // Gửi giá trị remember me
       });
-  
-      const data = await response.json();
+
+      const data = response.data;
       console.log('Phản hồi từ backend sau khi đăng nhập:', data);
-  
-      if (!response.ok) {
+
+      if (response.status !== 200) {
         setAlert({ type: 'error', message: data.error || 'Đăng nhập thất bại' });
       } else {
-        dispatch(loginAction(data));
+        // Lưu token và thông tin người dùng vào AsyncStorage và Redux
+        await AsyncStorage.setItem('authToken', data.token); // Lưu token vào AsyncStorage
+        dispatch(loginAction({ token: data.token, userInfo: data.userInfo })); // Lưu thông tin người dùng vào Redux
         router.push('/(tabs)');
+
+        // Reset form sau khi đăng nhập thành công
+        setEmailOrUsername('');
+        setPassword('');
       }
     } catch (error) {
       console.log('Lỗi kết nối khi đăng nhập:', error);
@@ -144,7 +169,6 @@ export default function Login() {
         <Image source={require('../../assets/images/intro.gif')} style={styles.logo} />
         <Text style={styles.title}>ĐĂNG NHẬP</Text>
       </View>
-      
 
       {alert.message && (
         <Text style={[styles.alertText, alert.type === 'error' ? styles.errorAlert : styles.successAlert]}>
@@ -152,55 +176,44 @@ export default function Login() {
         </Text>
       )}
 
-      <Formik
-        initialValues={{ emailOrUsername: '', password: '' }}
-        validationSchema={LoginSchema}
-        onSubmit={(values) => submitForm(values)}
-      >
-        {({ handleChange, handleBlur, handleSubmit, values, errors, touched }) => (
-          <View style={styles.form}>
-            <Text style={styles.label}>Tên tài khoản / Email</Text>
-            <TextInput
-              style={[styles.input, errors.emailOrUsername && touched.emailOrUsername && styles.inputError]}
-              placeholder="Nhập email hoặc username"
-              onChangeText={handleChange('emailOrUsername')}
-              onBlur={handleBlur('emailOrUsername')}
-              value={values.emailOrUsername}
-              keyboardType="email-address"
-            />
-            {errors.emailOrUsername && touched.emailOrUsername && <Text style={styles.errorText}>{errors.emailOrUsername}</Text>}
+      <View style={styles.form}>
+        <Text style={styles.label}>Tên tài khoản / Email</Text>
+        <TextInput
+          style={[styles.input, errors.emailOrUsername && styles.inputError]}
+          placeholder="Nhập email hoặc username"
+          value={emailOrUsername}
+          onChangeText={setEmailOrUsername}
+        />
+        {errors.emailOrUsername && <Text style={styles.errorText}>{errors.emailOrUsername}</Text>}
 
-            <Text style={styles.label}>Mật khẩu</Text>
-            <TextInput
-              style={[styles.input, errors.password && touched.password && styles.inputError]}
-              placeholder="Nhập mật khẩu"
-              secureTextEntry
-              onChangeText={handleChange('password')}
-              onBlur={handleBlur('password')}
-              value={values.password}
-            />
-            {errors.password && touched.password && <Text style={styles.errorText}>{errors.password}</Text>}
+        <Text style={styles.label}>Mật khẩu</Text>
+        <TextInput
+          style={[styles.input, errors.password && styles.inputError]}
+          placeholder="Nhập mật khẩu"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+        />
+        {errors.password && <Text style={styles.errorText}>{errors.password}</Text>}
 
-            <View style={styles.checkboxContainer}>
-              <CheckBox
-                value={rememberMe}
-                onValueChange={setRememberMe} // Cập nhật trạng thái remember me
-              />
-              <Text style={styles.checkboxLabel}>Nhớ tài khoản</Text>
-            </View>
+        <View style={styles.checkboxContainer}>
+          <CheckBox
+            value={rememberMe}
+            onValueChange={setRememberMe} // Cập nhật trạng thái remember me
+          />
+          <Text style={styles.checkboxLabel}>Nhớ tài khoản</Text>
+        </View>
 
-            <TouchableOpacity style={styles.button} onPress={handleSubmit}>
-              <Text style={styles.buttonText}>Đăng nhập</Text>
-            </TouchableOpacity>
+        <TouchableOpacity style={styles.button} onPress={submitForm}>
+          <Text style={styles.buttonText}>Đăng nhập</Text>
+        </TouchableOpacity>
 
-            <Text style={styles.orText}>Hoặc</Text>
+        <Text style={styles.orText}>Hoặc</Text>
 
-            <TouchableOpacity style={styles.googleButton} onPress={handleGoogleLogin}>
-              <Text style={styles.googleButtonText}>Đăng nhập với Google</Text>
-            </TouchableOpacity>
-          </View>
-        )}
-      </Formik>
+        <TouchableOpacity style={styles.googleButton} onPress={handleGoogleLogin}>
+          <Text style={styles.googleButtonText}>Đăng nhập với Google</Text>
+        </TouchableOpacity>
+      </View>
     </SafeAreaView>
   );
 }
